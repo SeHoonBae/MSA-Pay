@@ -1,0 +1,3 @@
+rootProject.name = 'MsaPay'
+include 'membership-service'
+
