@@ -4,8 +4,7 @@ import com.pay.membership.common.UseCase;
 import com.pay.membership.domain.Membership;
 
 @UseCase
-public interface FindMembershipUseCase {
+public interface ModifyMembershipUseCase {
 
-    Membership findMembership(FindMembershipCommand command);
-
+    Membership modifyMembership(ModifyMembershipCommand command);
 }
