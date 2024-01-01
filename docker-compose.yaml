@@ -1,0 +1,123 @@
+version: '3'
+services:
+  zookeeper:
+    image: 'arm64v8/zookeeper:3.8'
+    networks:
+      - pay_network
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_TLS_CLIENT_AUTH=none
+      - ZOO_TLS_QUORUM_CLIENT_AUTH=none
+
+  kafka:
+    image: 'bitnami/kafka:3.4.0'
+    networks:
+      - pay_network
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_LISTENERS=LC://kafka:29092,LX://kafka:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=LC:PLAINTEXT,LX:PLAINTEXT
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=LC
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    networks:
+      - pay_network
+    ports:
+      - "8989:8080"
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+
+  mysql:
+    image: mysql:8.0
+    networks:
+      - pay_network
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    env_file: .env
+    ports:
+      - "3307:3306"
+    environment:
+      - TZ=Asia/Seoul
+      - MYSQL_ROOT_PASSWORD=root@@
+      - MYSQL_USER=shbae
+      - MYSQL_PASSWORD=shbae@@
+
+  membership-service:
+    image: msapay-membership-service:1.0.0
+    networks:
+      - pay_network
+    ports:
+      - "8081:8080" # 외부에서 8081 port를 통해서 내부의 8080 port로 통할거야. 8080은 실제 어플리케이션 port
+    depends_on:
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/msa_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=shbae
+      - SPRING_DATASOURCE_PASSWORD=shbae@@
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  banking-service:
+    image: msapay-banking-service:1.0.0
+    networks:
+      - pay_network
+    ports:
+      - "8082:8080" # 외부에서 8081 port를 통해서 내부의 8080 port로 통할거야. 8080은 실제 어플리케이션 port
+    depends_on:
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/msa_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=shbae
+      - SPRING_DATASOURCE_PASSWORD=shbae@@
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  money-service:
+    image: msapay-money-service:1.0.0
+    networks:
+      - pay_network
+    ports:
+      - "8083:8080" # 외부에서 8081 port를 통해서 내부의 8080 port로 통할거야. 8080은 실제 어플리케이션 port
+    depends_on:
+      - mysql
+    environment:
+      - AXON_AXONSERVER_SERVERS=axon-server:8124
+      - AXON_SERIALIZER_EVENTS=jackson
+      - AXON_SERIALIZER_MESSAGES=jackson
+      - AXON_SERIALIZER_GENERAL=xstream
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/msa_pay?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=shbae
+      - SPRING_DATASOURCE_PASSWORD=shbae@@
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+networks:
+  pay_network:
+    driver: bridge

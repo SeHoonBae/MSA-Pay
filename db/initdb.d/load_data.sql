@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS msa_pay;
+USE msa_pay;
+
+
