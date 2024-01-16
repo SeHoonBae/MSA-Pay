@@ -10,7 +10,7 @@ import com.pay.banking.application.port.in.RequestFirmbankingUseCase;
 import com.pay.banking.application.port.out.RequestExternalFirmbankingPort;
 import com.pay.banking.application.port.out.RequestFirmbankingPort;
 import com.pay.banking.domain.FirmbankingRequest;
-import com.pay.membership.common.UseCase;
+import com.pay.common.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

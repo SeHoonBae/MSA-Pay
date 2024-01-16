@@ -1,8 +1,8 @@
 package com.pay.membership.application.service;
 
+import com.pay.membership.application.port.in.FindMembershipCommand;
 import com.pay.membership.adapter.out.persistence.MembershipJpaEntity;
 import com.pay.membership.adapter.out.persistence.MembershipMapper;
-import com.pay.membership.application.port.in.FindMembershipCommand;
 import com.pay.membership.application.port.in.FindMembershipUseCase;
 import com.pay.membership.application.port.out.FindMembershipPort;
 import com.pay.membership.domain.Membership;

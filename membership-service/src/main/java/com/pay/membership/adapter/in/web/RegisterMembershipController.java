@@ -2,7 +2,7 @@ package com.pay.membership.adapter.in.web;
 
 import com.pay.membership.application.port.in.RegisterMembershipCommand;
 import com.pay.membership.application.port.in.RegisterMembershipUseCase;
-import com.pay.membership.common.WebAdapter;
+import com.pay.common.WebAdapter;
 import com.pay.membership.domain.Membership;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
