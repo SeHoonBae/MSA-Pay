@@ -12,7 +12,7 @@ services:
       - ZOO_TLS_QUORUM_CLIENT_AUTH=none
 
   kafka:
-    image: 'bitnami/kafka:3.4.0'
+    image: 'docker.io/bitnami/kafka:3.5'
     networks:
       - pay_network
     ports:
@@ -41,6 +41,7 @@ services:
       - zookeeper
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
 
@@ -79,6 +80,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=shbae@@
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
 
   banking-service:
     image: msapay-banking-service:1.0.0
@@ -98,6 +101,9 @@ services:
       - SPRING_DATASOURCE_PASSWORD=shbae@@
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
 
   money-service:
     image: msapay-money-service:1.0.0
@@ -117,6 +123,37 @@ services:
       - SPRING_DATASOURCE_PASSWORD=shbae@@
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
+      - TASK_TOPIC=pay.task.topic
+      - TASK_RESULT_TOPIC=pay.task.result.topic
+      - SERVICE_MEMBERSHIP_URL=http://membership-service:8080
+
+  logging-consumer:
+    image: msapay-logging-consumer:1.0.0
+    networks:
+      - pay_network
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
+
+  task-consumer:
+    image: msapay-task-consumer:1.0.0
+    networks:
+      - pay_network
+    restart: always
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      - KAFKA_CLUSTERS_BOOTSTRAPSERVERS=kafka:29092
+      - LOGGING_TOPIC=logging.out.stdout
+      - TASK_TOPIC=pay.task.topic
+      - TASK_RESULT_TOPIC=pay.task.result.topic
 
 networks:
   pay_network:

@@ -6,6 +6,8 @@ import com.pay.banking.adapter.out.persistence.RegisteredBankAccountJpaEntity;
 import com.pay.banking.adapter.out.persistence.RegisteredBankAccountMapper;
 import com.pay.banking.application.port.in.RegisterBankAccountCommand;
 import com.pay.banking.application.port.in.RegisterBankAccountUseCase;
+import com.pay.banking.application.port.out.GetMembershipPort;
+import com.pay.banking.application.port.out.MembershipStatus;
 import com.pay.banking.application.port.out.RegisterBankAccountPort;
 import com.pay.banking.application.port.out.RequestBankAccountInfoPort;
 import com.pay.banking.domain.RegisteredBankAccount;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RegisterBankAccountService implements RegisterBankAccountUseCase {
 
+    private final GetMembershipPort getMembershipPort;
     private final RegisterBankAccountPort registerBankAccountPort;
     private final RegisteredBankAccountMapper registeredBankAccountMapper;
     private final RequestBankAccountInfoPort requestBankAccountInfoPort;
@@ -24,10 +27,14 @@ public class RegisterBankAccountService implements RegisterBankAccountUseCase {
     public RegisteredBankAccount registerBankAccount(RegisterBankAccountCommand command) {
 
         // 은행 계좌를 등록해야 하는 서비스 (비즈니스 로직)
-        // command.getMembershipId() 도 유효한지 membership에게 물어봐야 함
+        // command.getMembershipId()
 
-        // 멤버 서비스도 확인? 여기서는 skip
-
+        // call membership svc, 정상인지 확인
+        // call external bank svc, 정상인지 확인
+        MembershipStatus membershipStatus = getMembershipPort.getMembership(command.getMembershipId());
+        if(!membershipStatus.isValid()){
+            return null;
+        }
         // 1. 외부 실제 은행에 등록이 가능한 계좌인지(정상인지) 확인한다.
         // 외부의 은행에 이 계좌 정상인지? 확인을 해야 함
         // Biz Logic -> External System

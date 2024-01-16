@@ -1,6 +1,6 @@
 package com.pay.money.adapter.in.web;
 
-import com.pay.membership.common.WebAdapter;
+import com.pay.common.WebAdapter;
 import com.pay.money.application.port.in.IncreaseMoneyRequestCommand;
 import com.pay.money.application.port.in.IncreaseMoneyRequestUseCase;
 import com.pay.money.domain.MoneyChangingRequest;
@@ -29,6 +29,29 @@ public class RequestMoneyChangingController {
                 .build();
 
         MoneyChangingRequest moneyChangingRequest = increaseMoneyRequestUseCase.increaseMoneyRequest(command);
+
+        // MoneyChangingRequest -> MoneyChangingResultDetail
+        MoneyChangingResultDetail resultDetail = new MoneyChangingResultDetail(
+                moneyChangingRequest.getMoneyChangingRequestId(),
+                0,
+                0,
+                moneyChangingRequest.getChangingMoneyAmount()
+        );
+
+
+        return null;
+    }
+
+    @PostMapping("/money/increase-async")
+    MoneyChangingResultDetail increaseMonyChangingRequestAsync(@RequestBody IncreaseMoneyChangingRequest request){
+
+
+        IncreaseMoneyRequestCommand command = IncreaseMoneyRequestCommand.builder()
+                .targetMembershipId(request.getTargetMembershipId())
+                .amount(request.getAmount())
+                .build();
+
+        MoneyChangingRequest moneyChangingRequest = increaseMoneyRequestUseCase.increaseMoneyRequestAsync(command);
 
         // MoneyChangingRequest -> MoneyChangingResultDetail
         MoneyChangingResultDetail resultDetail = new MoneyChangingResultDetail(

@@ -1,9 +1,9 @@
 package com.pay.membership.application.service;
 
-import com.pay.membership.adapter.out.persistence.MembershipJpaEntity;
 import com.pay.membership.adapter.out.persistence.MembershipMapper;
 import com.pay.membership.application.port.in.RegisterMembershipCommand;
 import com.pay.membership.application.port.in.RegisterMembershipUseCase;
+import com.pay.membership.adapter.out.persistence.MembershipJpaEntity;
 import com.pay.membership.application.port.out.RegisterMembershipPort;
 import com.pay.membership.domain.Membership;
 import lombok.RequiredArgsConstructor;

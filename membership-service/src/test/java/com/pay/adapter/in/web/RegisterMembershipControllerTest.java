@@ -1,6 +1,7 @@
-package com.pay.membership.adapter.in.web;
+package com.pay.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pay.membership.adapter.in.web.RegisterMembershipRequest;
 import com.pay.membership.domain.Membership;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

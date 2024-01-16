@@ -2,9 +2,7 @@ package com.pay.banking.adapter.out.external.bank;
 
 import com.pay.banking.application.port.out.RequestBankAccountInfoPort;
 import com.pay.banking.application.port.out.RequestExternalFirmbankingPort;
-import com.pay.banking.domain.FirmbankingRequest;
-import com.pay.membership.common.ExternalSystemAdapter;
-import com.pay.membership.common.PersistenceAdapter;
+import com.pay.common.ExternalSystemAdapter;
 import lombok.RequiredArgsConstructor;
 
 @ExternalSystemAdapter
